@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid halves">
+  <div class="card">
+    <div class="card-head"><h2>Reactor details</h2></div>
+    <form class="form" data-form>
+      <div class="form-row">
+        <div class="field"><label>Reactor name</label><input name="reactor_name" maxlength="60" required></div>
+        <div class="field"><label>Working volume</label><div class="input-unit"><input name="reactor_volume_l" type="number" step="0.01" min="0"><span>L</span></div></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Culture organism</label><input name="culture_organism" maxlength="80"></div>
+        <div class="field"><label>Location</label><input name="reactor_location" maxlength="60"></div>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit">Save reactor details</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Temperature limits &amp; intervals</h2></div>
+    <form class="form" data-form>
+      <div class="form-row">
+        <div class="field"><label>Lower limit</label><div class="input-unit"><input name="temp_min" type="number" step="0.1" required><span>°C</span></div></div>
+        <div class="field"><label>Upper limit</label><div class="input-unit"><input name="temp_max" type="number" step="0.1" required><span>°C</span></div></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Sampling interval</label><div class="input-unit"><input name="sample_interval" type="number" min="1" max="3600" step="1" required><span>s</span></div>
+          <span class="hint">How often the device sends a reading (live view)</span></div>
+        <div class="field"><label>Recording interval</label><div class="input-unit"><input name="record_interval" type="number" min="1" max="86400" step="1" required><span>s</span></div>
+          <span class="hint">How often a reading is saved to the database</span></div>
+      </div>
+      <p class="small muted" style="margin:0">Limits are used for alerts only. Temperature is monitored, not controlled.</p>
+      <div class="actions"><button class="btn primary" type="submit">Save limits &amp; intervals</button></div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>Hardware connection</h2><div class="sub">Choose where readings come from</div></div>
+    <span id="connDetail"></span>
+  </div>
+  <form class="form" data-form id="hwForm">
+    <div class="radio-cards">
+      <label class="radio-card"><input type="radio" name="data_mode" value="simulation">
+        <span><b>Simulation</b><span class="small muted">Built-in virtual Arduino. Data is labelled <span class="badge sim">SIMULATED</span>.</span></span></label>
+      <label class="radio-card"><input type="radio" name="data_mode" value="serial">
+        <span><b>Arduino (USB serial)</b><span class="small muted">Real readings via PySerial. Data is labelled <span class="badge hw">HARDWARE</span>.</span></span></label>
+    </div>
+    <div class="form-row" style="align-items:end">
+      <div class="field"><label>Serial port</label>
+        <div style="display:flex; gap:8px">
+          <select name="serial_port" id="portSel"></select>
+          <button class="btn" type="button" id="refreshPorts" title="Rescan ports">↻</button>
+        </div>
+        <span class="hint">e.g. COM3 (Windows) · /dev/ttyACM0 (Linux) · /dev/cu.usbmodem… (macOS)</span>
+      </div>
+      <div class="field"><label>Baud rate</label>
+        <select name="baud_rate"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option>115200</option></select>
+        <span class="hint">Must match <code>Serial.begin()</code> in the firmware</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" type="submit">Save &amp; connect</button>
+      <button class="btn" type="button" id="reconnect">Reconnect</button>
+      <span class="small muted" id="connText"></span>
+    </div>
+  </form>
+</section>
+
+<section class="grid halves">
+  <div class="card">
+    <div class="card-head">
+      <div><h2>Serial console</h2><div class="sub">Raw protocol traffic – useful while integrating the firmware</div></div>
+      <button class="btn sm" id="clearLog">Clear</button>
+    </div>
+    <div class="console" id="console"></div>
+    <form class="actions" id="sendForm" style="margin-top:10px; flex-wrap:nowrap">
+      <input id="cmd" placeholder="Command, e.g. PING or GET" maxlength="64" class="mono">
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Data management</h2></div>
+    <p class="small" style="margin-top:0">Before starting real experiments you can remove all test data generated in simulation mode. Hardware records are never touched by this action.</p>
+    <button class="btn danger" id="purgeSim">🗑 Delete all simulated data</button>
+    <hr style="border:0; border-top:1px solid var(--border); margin:18px 0">
+    <h3 style="margin-bottom:8px">Integration documents</h3>
+    <ul class="small" style="margin:0; padding-left:18px; color:var(--text-2)">
+      <li><code>docs/SERIAL_PROTOCOL.md</code> – line protocol the Arduino must implement</li>
+      <li><code>docs/API.md</code> – REST &amp; Socket.IO API</li>
+      <li><code>arduino/pbr_firmware/pbr_firmware.ino</code> – reference sketch</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

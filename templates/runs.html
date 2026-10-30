@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid halves">
+  <!-- Active run -->
+  <div class="card run-active hidden" id="activeCard">
+    <div class="card-head">
+      <div><h2>Active culture run</h2><div class="sub mono" id="aId">--</div></div>
+      <span class="badge ok live"><span class="dot"></span>RUNNING</span>
+    </div>
+    <div class="small muted">Elapsed duration</div>
+    <div class="timer" id="aTimer">00:00:00</div>
+    <dl class="kv" style="margin:14px 0">
+      <dt>Name</dt><dd id="aName">--</dd>
+      <dt>Organism</dt><dd id="aOrg">--</dd>
+      <dt>Started</dt><dd class="num" id="aStart">--</dd>
+      <dt>Data source</dt><dd id="aSrc">--</dd>
+      <dt>Notes</dt><dd id="aNotes">--</dd>
+    </dl>
+    <div class="field"><label for="endNotes">End-of-run notes (optional)</label><textarea id="endNotes" placeholder="Final OD, observations, reason for stopping…"></textarea></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn solid-danger" id="stopBtn">■ Stop run</button>
+      <a class="btn" id="aDataLink" href="#">View run data</a>
+    </div>
+  </div>
+
+  <!-- Start new -->
+  <div class="card" id="startCard">
+    <div class="card-head"><div><h2>Start a new culture run</h2><div class="sub">A unique run ID (RUN-YYYYMMDD-NNN) is generated automatically</div></div></div>
+    <form class="form" id="startForm">
+      <div class="field"><label for="name">Run name *</label><input id="name" required maxlength="80" placeholder="e.g. Chlorella batch – 12:12 photoperiod"></div>
+      <div class="field"><label for="organism">Organism / strain</label><input id="organism" maxlength="80"></div>
+      <div class="field"><label for="notes">Notes</label><textarea id="notes" placeholder="Medium, inoculum density, aeration rate…"></textarea></div>
+      <div class="actions"><button class="btn primary lg" type="submit">▶ Start run</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>How runs work</h2></div>
+    <ul class="small" style="margin:0; padding-left:18px; color:var(--text-2); display:grid; gap:6px">
+      <li>Only one run can be active at a time.</li>
+      <li>Every temperature reading, lighting event and alert recorded while a run is active is tagged with its run ID.</li>
+      <li>Duration is calculated from start to stop (or to now while running).</li>
+      <li>Runs started in simulation mode are labelled <span class="badge sim">SIMULATED</span> so they are never confused with real experiments.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>Experiment history</h2><div class="sub" id="histCount">--</div></div>
+    <a class="btn sm" href="/api/export/runs.csv">⬇ Export CSV</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Run ID</th><th>Name</th><th>Organism</th><th>Start</th><th>End</th><th>Duration</th><th>Status</th><th>Readings</th><th>Source</th><th></th></tr></thead>
+      <tbody id="runs"></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/runs.js') }}"></script>
+{% endblock %}

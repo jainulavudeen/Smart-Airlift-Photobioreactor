@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid two">
+  <div class="card">
+    <div class="card-head">
+      <div><h2>Current temperature</h2><div class="sub">Monitoring only – this system does not control temperature</div></div>
+      <span id="srcBadge"></span>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between">
+      <div>
+        <div class="hero-temp"><span class="big" id="temp">--</span><span class="unit">°C</span></div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap" id="tempState"></div>
+        <div class="small muted" style="margin-top:8px">Last reading <span id="lastSeen" class="num">--</span> · every <span id="interval">--</span> s</div>
+      </div>
+      <div class="stat-row" style="flex:1; min-width:260px">
+        <div class="stat"><div class="l">Window min</div><div class="v"><span id="sMin">--</span> °C</div></div>
+        <div class="stat"><div class="l">Window max</div><div class="v"><span id="sMax">--</span> °C</div></div>
+        <div class="stat"><div class="l">Window avg</div><div class="v"><span id="sAvg">--</span> °C</div></div>
+        <div class="stat"><div class="l">Points shown</div><div class="v" id="sN">0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Temperature limits</h2><span class="sub">Alerts fire outside this band</span></div>
+    <form class="form" id="limitsForm">
+      <div class="form-row">
+        <div class="field"><label for="tmin">Lower limit</label><div class="input-unit"><input id="tmin" type="number" step="0.1" required><span>°C</span></div></div>
+        <div class="field"><label for="tmax">Upper limit</label><div class="input-unit"><input id="tmax" type="number" step="0.1" required><span>°C</span></div></div>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit">Save limits</button><span class="small muted">Applies immediately</span></div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>Real-time temperature</h2><div class="sub">Live readings at the sampling interval · dashed red = limits · yellow bands = LED on</div></div>
+    <div class="actions">
+      <div class="seg" id="windowSeg">
+        <button data-min="5">5 min</button><button data-min="15" class="active">15 min</button><button data-min="60">1 h</button><button data-min="360">6 h</button><button data-min="1440">24 h</button>
+      </div>
+      <button class="btn sm" id="pauseBtn">❚❚ Pause</button>
+    </div>
+  </div>
+  <div class="chart-box lg"><canvas id="chart"></canvas><div class="chart-empty" id="chartEmpty">Waiting for data…</div></div>
+</section>
+
+<section class="card" id="alerts">
+  <div class="card-head">
+    <div><h2>Alerts</h2><div class="sub">Limit excursions, sensor faults and connection events</div></div>
+    <div class="actions">
+      <div class="seg" id="alertFilter"><button data-f="unacked" class="active">Unacknowledged</button><button data-f="all">All</button></div>
+      <button class="btn sm" id="ackAll">Acknowledge all</button>
+    </div>
+  </div>
+  <div class="alert-list" id="alertList"><div class="empty">Loading…</div></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/monitoring.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="card-head"><h2>Filter records</h2><span class="sub">Filters apply to the chart, tables and CSV exports</span></div>
+  <div class="form-row" style="align-items:end">
+    <div class="field"><label>Time range</label>
+      <select id="range">
+        <option value="1">Last hour</option>
+        <option value="24" selected>Last 24 hours</option>
+        <option value="168">Last 7 days</option>
+        <option value="720">Last 30 days</option>
+        <option value="all">All time</option>
+        <option value="custom">Custom…</option>
+      </select>
+    </div>
+    <div class="field custom hidden"><label for="from">From</label><input type="datetime-local" id="from"></div>
+    <div class="field custom hidden"><label for="to">To</label><input type="datetime-local" id="to"></div>
+    <div class="field"><label for="run">Culture run</label><select id="run"><option value="">All runs</option></select></div>
+    <div class="field"><label for="source">Data source</label>
+      <select id="source"><option value="">All sources</option><option value="hardware">Hardware only</option><option value="simulated">Simulated only</option></select>
+    </div>
+    <div class="field"><button class="btn primary" id="apply">Apply filters</button></div>
+  </div>
+</section>
+
+<section class="grid kpis">
+  <div class="card kpi"><div class="label">Recorded readings</div><div class="value num" id="sN">--</div></div>
+  <div class="card kpi"><div class="label">Minimum</div><div class="value"><span id="sMin">--</span><span class="unit">°C</span></div></div>
+  <div class="card kpi"><div class="label">Maximum</div><div class="value"><span id="sMax">--</span><span class="unit">°C</span></div></div>
+  <div class="card kpi"><div class="label">Average</div><div class="value"><span id="sAvg">--</span><span class="unit">°C</span></div></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>Temperature history</h2><div class="sub">Hardware and simulated series are drawn in different colours · yellow bands = LED on</div></div>
+    <a class="btn sm" id="exportReadings2" href="#">⬇ Export readings CSV</a>
+  </div>
+  <div class="chart-box lg"><canvas id="chart"></canvas><div class="chart-empty" id="chartEmpty">No readings in this range</div></div>
+</section>
+
+<section class="card">
+  <div class="tabs" id="tabs">
+    <button data-tab="readings" class="active">Temperature readings</button>
+    <button data-tab="lighting">Lighting records</button>
+    <button data-tab="runs">Experiment history</button>
+    <button data-tab="alerts">Alerts</button>
+  </div>
+  <div class="actions" style="justify-content:space-between; margin-bottom:12px">
+    <span class="small muted" id="tableInfo"></span>
+    <a class="btn sm primary" id="exportBtn" href="#">⬇ Export CSV</a>
+  </div>
+  <div class="table-wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}

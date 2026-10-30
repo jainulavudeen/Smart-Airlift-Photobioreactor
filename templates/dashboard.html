@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid kpis">
+  <div class="card kpi accent" id="kpiReactor">
+    <div class="label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2v6.6L3.6 18.4A2.4 2.4 0 0 0 5.7 22h12.6a2.4 2.4 0 0 0 2.1-3.6L15 8.6V2h-2v7.1l2.3 4.2H8.7L11 9.1V2H9z"/></svg>Reactor status</div>
+    <div class="value" id="reactorState">--</div>
+    <div class="meta" id="reactorMeta">--</div>
+  </div>
+  <div class="card kpi accent" id="kpiTemp">
+    <div class="label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 13V5a3 3 0 0 0-6 0v8a5 5 0 1 0 6 0zm-3-9a1 1 0 0 1 1 1v3h-2V5a1 1 0 0 1 1-1z"/></svg>Temperature</div>
+    <div class="value"><span id="temp">--</span><span class="unit">°C</span></div>
+    <div class="meta"><span id="tempState"></span><span id="tempSource"></span></div>
+  </div>
+  <div class="card kpi accent">
+    <div class="label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2z"/></svg>LED lighting</div>
+    <div class="value" id="led">--</div>
+    <div class="meta" id="ledMeta">--</div>
+  </div>
+  <div class="card kpi accent">
+    <div class="label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 11h-5v-2h3V6h2v7z"/></svg>Culture runtime</div>
+    <div class="value mono" id="runtime" style="font-size:26px">--</div>
+    <div class="meta" id="runtimeMeta">No active run</div>
+  </div>
+  <div class="card kpi accent" id="kpiConn">
+    <div class="label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 7v4h1v2h-3V5h2l-3-4-3 4h2v8H8v-2.07A1.9 1.9 0 0 0 9 9.2 2 2 0 1 0 6 11v2.07c0 1.1.9 2 2 2h3v3.05a2.5 2.5 0 1 0 2 0V15h3c1.1 0 2-.9 2-2v-2h1V7h-4z"/></svg>Arduino connection</div>
+    <div class="value" id="conn" style="font-size:22px">--</div>
+    <div class="meta" id="connMeta">--</div>
+  </div>
+</section>
+
+<section class="grid two">
+  <div class="card">
+    <div class="card-head">
+      <div><h2>Temperature – last 30 minutes</h2><div class="sub">Shaded band = acceptable range · yellow = LED on</div></div>
+      <a class="btn sm" href="/monitoring">Open live monitoring →</a>
+    </div>
+    <div class="chart-box"><canvas id="chart"></canvas><div class="chart-empty" id="chartEmpty">Waiting for data…</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Reactor details</h2><a class="btn sm" href="/settings">Edit</a></div>
+    <dl class="kv" id="details"></dl>
+    <div class="range">
+      <div class="small muted" style="margin-bottom:6px">Current temperature within limits</div>
+      <div class="range-track"><div class="range-marker" id="rangeMarker" style="left:50%"></div></div>
+      <div class="range-labels"><span id="rLo">--</span><span id="rHi">--</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="grid halves">
+  <div class="card">
+    <div class="card-head"><h2>Recent alerts</h2><a class="btn sm" href="/monitoring#alerts">All alerts</a></div>
+    <div class="alert-list" id="alerts"><div class="empty">No alerts</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Recent lighting events</h2><a class="btn sm" href="/lighting">Lighting control</a></div>
+    <div class="table-wrap" style="max-height:300px">
+      <table><thead><tr><th>Time</th><th>State</th><th>Trigger</th><th>Source</th></tr></thead><tbody id="events"></tbody></table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

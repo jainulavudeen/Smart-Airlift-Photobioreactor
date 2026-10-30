@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid three">
+  <div class="card" style="text-align:center">
+    <div class="card-head"><h2>LED strip</h2><span id="srcBadge"></span></div>
+    <div class="lamp" id="lamp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2z"/></svg>
+    </div>
+    <div style="font-size:26px; font-weight:700" id="ledText">--</div>
+    <div class="small muted" id="ledSub">--</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Control mode</h2></div>
+    <div class="seg" id="modeSeg" style="width:100%">
+      <button data-mode="auto" style="flex:1">⏱ Automatic (schedule)</button>
+      <button data-mode="manual" style="flex:1">✋ Manual</button>
+    </div>
+    <p class="small muted" id="modeHelp" style="margin:12px 0"></p>
+    <h3 style="margin-bottom:8px">Manual override</h3>
+    <div class="actions">
+      <button class="btn lg primary" id="onBtn" style="flex:1">Turn ON</button>
+      <button class="btn lg" id="offBtn" style="flex:1">Turn OFF</button>
+    </div>
+    <p class="small muted" style="margin:10px 0 0">Pressing ON/OFF switches to manual mode. Select <b>Automatic</b> to resume the schedule.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Photoperiod schedule</h2><span class="sub">Device RTC time</span></div>
+    <form class="form" id="schedForm">
+      <div class="form-row">
+        <div class="field"><label for="start">LED start (ON)</label><input type="time" id="start" required></div>
+        <div class="field"><label for="stop">LED stop (OFF)</label><input type="time" id="stop" required></div>
+      </div>
+      <div class="small" id="photoperiod">--</div>
+      <div class="actions"><button class="btn primary" type="submit">Save schedule</button></div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>24-hour light cycle</h2><div class="sub">Scheduled ON window · red line = current time</div></div>
+    <span class="small muted" id="nextChange"></span>
+  </div>
+  <div class="timeline" id="timeline"><div class="now" id="nowLine"></div></div>
+  <div class="timeline-labels"><span>00:00</span><span>03:00</span><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>24:00</span></div>
+  <div class="legend-inline"><span><i style="background:#f5b700"></i>Light (LED ON)</span><span><i style="background:#23382e"></i>Dark (LED OFF)</span></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>Lighting records</h2><div class="sub">Every ON/OFF transition is stored</div></div>
+    <a class="btn sm" href="/api/export/lighting.csv">⬇ Export CSV</a>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Time</th><th>State</th><th>Trigger</th><th>Source</th></tr></thead><tbody id="events"></tbody></table>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/lighting.js') }}"></script>
+{% endblock %}
